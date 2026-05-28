@@ -1,5 +1,5 @@
 const CONFIG = {
-  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbxgyE1bWy1xmzQGGNZ4w99J3wNVTA4KigVs6QVcLmsLu5t8DtGEPKnGlrryG-2BeI-T/exec",
+  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbx6ntzH26KpNRt4Zzrv2HxCc4okhMjO9d_AHOouuFswfhcT52jlP1ZIetC3l5d8-9xR/exec",
   MQTT_BROKER: "wss://broker.hivemq.com:8884/mqtt",
   MQTT_CLIENT_ID: "dashboard-" + Math.random().toString(16).slice(2, 8),
 
