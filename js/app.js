@@ -7,10 +7,11 @@ async function init() {
   bindCaptureResult();
 
   // Load data historis untuk grafik monitoring
-  const todayData = await API.getToday();
-  Charts.loadHistorical(todayData);
-
-  // Load grafik tab grafik (lazy, hanya saat tab dibuka)
+  const [sensor, esp2] = await Promise.all([
+    API.getToday(),
+    API.getTodayEnergi()
+  ]);
+  Charts.loadHistorical(sensor, esp2);
 }
 
 function switchTab(name) {
@@ -21,14 +22,17 @@ function switchTab(name) {
 
   // Load grafik saat pertama kali tab grafik dibuka
   if (name === "grafik") {
-    Grafik.load("today");
-  }
+  loadGrafikTab("daily");
+}
 }
 
 // Polling setiap 1 menit untuk update grafik monitoring
 setInterval(async () => {
-  const todayData = await API.getToday();
-  Charts.loadHistorical(todayData);
+  const [sensor, esp2] = await Promise.all([
+    API.getToday(),
+    API.getTodayEnergi()
+  ]);
+  Charts.loadHistorical(sensor, esp2);
 }, 60000);
 
 init();

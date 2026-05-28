@@ -79,49 +79,65 @@ const Charts = (() => {
     dataset("COP", "#e040fb")
   ]);
 
-  function loadHistorical(rows) {
-    if (!rows || rows.length === 0) return;
-    const labels = rows.map(r => {
-      const d = new Date(r.timestamp);
+  function loadHistorical(rowsSensor, rowsESP2) {
+  if (rowsSensor && rowsSensor.length > 0) {
+    const labels = rowsSensor.map(r => {
+      const d = new Date(r.Timestamp);
       return d.getHours().toString().padStart(2,"0") + "." +
              d.getMinutes().toString().padStart(2,"0");
     });
-
     suhuKelembaban.data.labels = labels;
-    suhuKelembaban.data.datasets[0].data = rows.map(r => r.suhu_ruangan);
-    suhuKelembaban.data.datasets[1].data = rows.map(r => r.kelembaban_ruangan);
+    suhuKelembaban.data.datasets[0].data = rowsSensor.map(r => r.Suhu_Avg);
+    suhuKelembaban.data.datasets[1].data = rowsSensor.map(r => r.Kelembaban_Avg);
     suhuKelembaban.update();
-
-    energiMonitoring.data.labels = labels;
-    energiMonitoring.data.datasets[0].data = rows.map(r => r.energi);
-    energiMonitoring.update();
   }
 
-  function loadGrafik(rows) {
-    if (!rows || rows.length === 0) return;
-    const labels = rows.map(r => {
-      const d = new Date(r.timestamp);
+  if (rowsESP2 && rowsESP2.length > 0) {
+    const labels = rowsESP2.map(r => {
+      const d = new Date(r.Timestamp);
       return d.getHours().toString().padStart(2,"0") + "." +
              d.getMinutes().toString().padStart(2,"0");
     });
+    energiMonitoring.data.labels = labels;
+    energiMonitoring.data.datasets[0].data = rowsESP2.map(r => r.Energi);
+    energiMonitoring.update();
+  }
+}
 
-    thiChart.data.labels = labels;
-    thiChart.data.datasets[0].data = rows.map(r => r.thi);
-    thiChart.update();
+  function loadGrafik(rowsSensor, rowsESP2) {
+    if (rowsSensor && rowsSensor.length > 0) {
+      const labels = rowsSensor.map(r => {
+        const d = new Date(r.Timestamp);
+        return d.getHours().toString().padStart(2,"0") + "." +
+              d.getMinutes().toString().padStart(2,"0");
+      });
 
-    inletChart.data.labels = labels;
-    inletChart.data.datasets[0].data = rows.map(r => r.suhu_inlet);
-    inletChart.data.datasets[1].data = rows.map(r => r.kelembaban_inlet);
-    inletChart.update();
+      thiChart.data.labels = labels;
+      thiChart.data.datasets[0].data = rowsSensor.map(r => r.THI);
+      thiChart.update();
+    }
 
-    outletChart.data.labels = labels;
-    outletChart.data.datasets[0].data = rows.map(r => r.suhu_outlet);
-    outletChart.data.datasets[1].data = rows.map(r => r.kelembaban_outlet);
-    outletChart.update();
+    if (rowsESP2 && rowsESP2.length > 0) {
+      const labels = rowsESP2.map(r => {
+        const d = new Date(r.Timestamp);
+        return d.getHours().toString().padStart(2,"0") + "." +
+              d.getMinutes().toString().padStart(2,"0");
+      });
 
-    copChart.data.labels = labels;
-    copChart.data.datasets[0].data = rows.map(r => r.cop);
-    copChart.update();
+      inletChart.data.labels = labels;
+      inletChart.data.datasets[0].data = rowsESP2.map(r => r.Suhu_Inlet);
+      inletChart.data.datasets[1].data = rowsESP2.map(r => r.Kelembaban_Inlet);
+      inletChart.update();
+
+      outletChart.data.labels = labels;
+      outletChart.data.datasets[0].data = rowsESP2.map(r => r.Suhu_Outlet);
+      outletChart.data.datasets[1].data = rowsESP2.map(r => r.Kelembaban_Outlet);
+      outletChart.update();
+
+      copChart.data.labels = labels;
+      copChart.data.datasets[0].data = rowsESP2.map(r => r.COP);
+      copChart.update();
+    }
   }
 
   function loadMonthly(rows) {
