@@ -14,7 +14,7 @@ const API = (() => {
     }
   }
 
-  // Untuk grafik monitoring (tab 1) — ambil data hari ini
+  // Tab monitoring — data hari ini
   function getToday() {
     return get({ action: "getData", sheet: "ESP1_SensorLog", range: "daily" });
   }
@@ -23,7 +23,7 @@ const API = (() => {
     return get({ action: "getData", sheet: "ESP2_SensorLog", range: "daily" });
   }
 
-  // Untuk tab grafik — semua sheet dengan filter range
+  // Tab grafik — dengan filter range
   function getESP1(range) {
     return get({ action: "getData", sheet: "ESP1_SensorLog", range });
   }
@@ -32,5 +32,10 @@ const API = (() => {
     return get({ action: "getData", sheet: "ESP2_SensorLog", range });
   }
 
-  return { getToday, getTodayEnergi, getESP1, getESP2 };
+  // Energi bulanan
+  function getMonthly() {
+    return get({ action: "getData", sheet: "ESP2_SensorLog", range: "monthly" });
+  }
+
+  return { getToday, getTodayEnergi, getESP1, getESP2, getMonthly };
 })();
