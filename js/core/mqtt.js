@@ -5,43 +5,48 @@ const MQTTClient = (() => {
   let reconnectDelay = 1000;
   const MAX_RECONNECT = 30000;
   let connectionCallbacks = [];
+  let connectAttempted = false;
 
   function connect() {
-    if (client && client.connected) return;
-    client = new Paho.MQTT.Client(CONFIG.MQTT_BROKER, CONFIG.MQTT_CLIENT_ID);
+    if (connectAttempted) return;
+    connectAttempted = true;
 
-    client.onConnectionLost = () => {
-      notifyConnection(false);
-      scheduleReconnect();
+    const url = CONFIG.MQTT_BROKER;
+    const opts = {
+      clientId: CONFIG.MQTT_CLIENT_ID,
+      clean: true,
     };
 
-    client.onMessageArrived = (msg) => {
-      const handler = handlers[msg.destinationName];
-      if (handler) handler(msg.payloadString);
-    };
+    client = mqtt.connect(url, opts);
 
-    client.onConnect = () => {
+    client.on("connect", () => {
       reconnectDelay = 1000;
       notifyConnection(true);
       Object.values(CONFIG.TOPICS).forEach(t => client.subscribe(t));
-    };
+    });
 
-    client.onFailure = () => {
+    client.on("message", (topic, payload) => {
+      const handler = handlers[topic];
+      if (handler) handler(payload.toString());
+    });
+
+    client.on("reconnect", () => {
+      notifyConnection(false);
+    });
+
+    client.on("close", () => {
       notifyConnection(false);
       scheduleReconnect();
-    };
-
-    client.connect({
-      useSSL: true,
-      onSuccess: client.onConnect,
-      onFailure: client.onFailure,
     });
+
+    client.on("error", () => {});
   }
 
   function scheduleReconnect() {
     if (reconnectTimer) return;
     reconnectTimer = setTimeout(() => {
       reconnectTimer = null;
+      connectAttempted = false;
       connect();
     }, reconnectDelay);
     reconnectDelay = Math.min(reconnectDelay * 2, MAX_RECONNECT);
@@ -72,11 +77,7 @@ const MQTTClient = (() => {
         reject(new Error("MQTT tidak terhubung"));
         return;
       }
-      const msg = new Paho.MQTT.Message(
-        typeof payload === "string" ? payload : JSON.stringify(payload)
-      );
-      msg.destinationName = topic;
-      client.send(msg);
+      client.publish(topic, typeof payload === "string" ? payload : JSON.stringify(payload));
       resolve();
     });
   }

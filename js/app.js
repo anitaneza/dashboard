@@ -56,11 +56,17 @@ function bindEvents() {
 }
 
 function switchTab(name) {
-  document.querySelectorAll(".tab-content").forEach(el => el.classList.remove("active"));
+  document.querySelectorAll(".tab-content").forEach(el => {
+    el.classList.remove("active");
+    el.classList.add("hidden");
+  });
   document.querySelectorAll("[data-tab]").forEach(el => el.classList.remove("active"));
   const tab = document.getElementById("tab-" + name);
   const btn = document.querySelector(`[data-tab="${name}"]`);
-  if (tab) tab.classList.add("active");
+  if (tab) {
+    tab.classList.remove("hidden");
+    tab.classList.add("active");
+  }
   if (btn) btn.classList.add("active");
 }
 
