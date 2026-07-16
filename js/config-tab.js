@@ -27,7 +27,8 @@ function startCapture() {
 }
 
 function confirmCapture() {
-  MQTTClient.publish(CONFIG.TOPICS.CAPTURE_CONFIRM, "confirm");
+  const selected = document.getElementById("ir-select").value;
+  MQTTClient.publish(CONFIG.TOPICS.CAPTURE_CONFIRM, selected);
   document.getElementById("capture-status").textContent = "Tersimpan.";
   document.getElementById("btn-save-ir").style.display = "none";
 }

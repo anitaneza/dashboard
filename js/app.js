@@ -12,6 +12,7 @@ async function init() {
     API.getTodayEnergi()
   ]);
   Charts.loadHistorical(sensor, esp2);
+  loadEnergyTdl("daily");
 }
 
 let grafikLoaded = false;
@@ -37,5 +38,21 @@ setInterval(async () => {
   ]);
   Charts.loadHistorical(sensor, esp2);
 }, 60000);
+
+let energyTdlRange = "daily";
+
+async function loadEnergyTdl(range) {
+  const rows = await API.getESP2(range);
+  Charts.loadEnergyTdl(rows, range);
+}
+
+function setEnergyTdlFilter(range, button) {
+  energyTdlRange = range;
+  document.querySelectorAll(".period-filter-btn").forEach(btn => btn.classList.remove("active"));
+  button.classList.add("active");
+  document.getElementById("title-energi-filtered").textContent =
+    `Konsumsi Energi (${range === "daily" ? "Harian" : "Mingguan"})`;
+  loadEnergyTdl(range);
+}
 
 init();

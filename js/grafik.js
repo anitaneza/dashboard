@@ -8,6 +8,9 @@ async function loadGrafikTab(range) {
   // Load grafik bulanan hanya saat filter "monthly" atau pertama kali
   const monthly = await API.getMonthly();
   Charts.loadMonthly(monthly);
+
+  const cop = await API.getCop("Januari");
+  console.log("COP data:", cop);
 }
 
 function setFilter(range, btn) {

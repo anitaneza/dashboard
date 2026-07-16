@@ -67,10 +67,31 @@
         <canvas id="chart-suhu-kelembaban"></canvas>
       </div>
       <div class="chart-box">
-        <div class="chart-title">Energi</div>
-        <canvas id="chart-energi"></canvas>
+        <div class="chart-title">Daya</div>
+        <canvas id="chart-daya"></canvas>
       </div>
     </div>
+
+    <section class="energy-tdl-section" aria-labelledby="energy-tdl-title">
+      <div class="section-divider"></div>
+      <div class="energy-tdl-toolbar">
+        <span id="energy-tdl-title" class="sr-only">Grafik energi dan TDL</span>
+        <div class="period-filter" role="group" aria-label="Filter periode grafik energi dan TDL">
+          <button class="period-filter-btn active" type="button" onclick="setEnergyTdlFilter('daily', this)">Harian</button>
+          <button class="period-filter-btn" type="button" onclick="setEnergyTdlFilter('weekly', this)">Mingguan</button>
+        </div>
+      </div>
+      <div class="energy-tdl-grid">
+        <div class="chart-box chart-box-filtered">
+          <div class="chart-title" id="title-energi-filtered">Konsumsi Energi (Harian)</div>
+          <canvas id="chart-energi-filtered"></canvas>
+        </div>
+        <div class="chart-box chart-box-filtered">
+          <div class="chart-title">TDL</div>
+          <canvas id="chart-tdl"></canvas>
+        </div>
+      </div>
+    </section>
 
   </div>
 

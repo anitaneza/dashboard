@@ -3,151 +3,173 @@ const Charts = (() => {
     responsive: true,
     maintainAspectRatio: true,
     animation: false,
-    plugins: { legend: { labels: { color: "#aaa", font: { size: 12 } } } },
+    plugins: { legend: { labels: { color: "#e5e7eb", font: { size: 12 } } } },
     scales: {
-      x: { ticks: { color: "#666", maxTicksLimit: 8 }, grid: { color: "rgba(255,255,255,0.05)" } },
-      y: { ticks: { color: "#666" }, grid: { color: "rgba(255,255,255,0.05)" } }
+      x: { ticks: { color: "#d1d5db", maxTicksLimit: 10 }, grid: { color: "rgba(255,255,255,0.14)" } },
+      y: { ticks: { color: "#e5e7eb" }, grid: { color: "rgba(255,255,255,0.14)" } }
     }
   };
 
-  function makeLine(id, datasets, yMin, yMax) {
+  function createLineChart(id, datasets, yMin, yMax) {
     const ctx = document.getElementById(id).getContext("2d");
     return new Chart(ctx, {
       type: "line",
       data: { labels: [], datasets },
       options: {
         ...defaults,
-        scales: {
-          ...defaults.scales,
-          y: { ...defaults.scales.y, min: yMin, max: yMax }
-        }
+        scales: { ...defaults.scales, y: { ...defaults.scales.y, min: yMin, max: yMax } }
       }
     });
   }
 
-  function makeBar(id, label, color) {
+  function createBarChart(id, label, color) {
     const ctx = document.getElementById(id).getContext("2d");
     return new Chart(ctx, {
       type: "bar",
-      data: {
-        labels: ["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agu","Sep","Okt","Nov","Des"],
-        datasets: [{ label, data: new Array(12).fill(0), backgroundColor: color, borderRadius: 6 }]
-      },
-      options: {
-        ...defaults,
-        plugins: { legend: { display: false } }
-      }
+      data: { labels: [], datasets: [{ label, data: [], backgroundColor: color, borderRadius: 2 }] },
+      options: { ...defaults, plugins: { legend: { display: false } } }
     });
   }
 
-  function dataset(label, color, fill = false) {
+  function lineDataset(label, color, fill = false) {
     return {
-      label, data: [], borderColor: color,
+      label,
+      data: [],
+      borderColor: color,
       backgroundColor: fill ? color + "22" : "transparent",
-      borderWidth: 2, pointRadius: 3,
-      pointBackgroundColor: color, tension: 0.3, fill
+      borderWidth: 3,
+      pointRadius: 0,
+      pointHoverRadius: 4,
+      tension: 0.3,
+      fill
     };
   }
 
-  // Buat semua chart
-  const suhuKelembaban = makeLine("chart-suhu-kelembaban", [
-    dataset("Suhu (°C)", "#ff7043"),
-    dataset("Kelembaban (%)", "#7986cb")
+  function formatTime(value) {
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return String(value || "");
+    return `${String(date.getHours()).padStart(2, "0")}.${String(date.getMinutes()).padStart(2, "0")}`;
+  }
+
+  function formatDay(value) {
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return String(value || "");
+    return `${String(date.getDate()).padStart(2, "0")}/${String(date.getMonth() + 1).padStart(2, "0")}`;
+  }
+
+  function values(rows, fieldNames) {
+    return rows.map(row => {
+      const field = fieldNames.find(name => row[name] !== undefined && row[name] !== "");
+      const value = Number.parseFloat(field ? row[field] : NaN);
+      return Number.isFinite(value) ? value : null;
+    });
+  }
+
+  function updateChart(chart, labels, datasetValues) {
+    chart.data.labels = labels;
+    datasetValues.forEach((data, index) => { chart.data.datasets[index].data = data; });
+    chart.update();
+  }
+
+  const suhuKelembabanChart = createLineChart("chart-suhu-kelembaban", [
+    lineDataset("Suhu (°C)", "#ff6b57"),
+    lineDataset("Kelembaban (%)", "#7c6cf2")
   ], 0, 100);
 
-  const energiMonitoring = makeLine("chart-energi", [
-    dataset("Energi (kWh)", "#00c8a0", true)
-  ]);
+  const dayaChart = createLineChart("chart-daya", [
+    lineDataset("Daya (Watt)", "#4169d8")
+  ], 0);
 
-  const energiBulanan = makeBar("chart-energi-bulanan", "Energi (kWh)", "#00c8a0");
-
-  const thiChart = makeLine("chart-thi", [
-    dataset("THI", "#9b59b6")
-  ]);
-
-  const inletChart = makeLine("chart-inlet", [
-    dataset("Suhu Inlet (°C)", "#ff7043"),
-    dataset("Kelembaban Inlet (%)", "#7986cb")
+  const energiBulananChart = createBarChart("chart-energi-bulanan", "Energi (kWh)", "#27a8b6");
+  const thiChart = createLineChart("chart-thi", [lineDataset("THI", "#a315c6")]);
+  const inletChart = createLineChart("chart-inlet", [
+    lineDataset("Suhu Inlet (°C)", "#ff6b57"),
+    lineDataset("Kelembaban Inlet (%)", "#7c6cf2")
   ], 0, 100);
-
-  const outletChart = makeLine("chart-outlet", [
-    dataset("Suhu Outlet (°C)", "#ff7043"),
-    dataset("Kelembaban Outlet (%)", "#7986cb")
+  const outletChart = createLineChart("chart-outlet", [
+    lineDataset("Suhu Outlet (°C)", "#ff6b57"),
+    lineDataset("Kelembaban Outlet (%)", "#7c6cf2")
   ], 0, 100);
+  const copChart = createLineChart("chart-cop", [lineDataset("COP", "#e040fb")]);
+  const energiFilteredChart = createBarChart("chart-energi-filtered", "Konsumsi Energi (kWh)", "#27a8b6");
+  const tdlChart = createBarChart("chart-tdl", "TDL", "#ff3535");
 
-  const copChart = makeLine("chart-cop", [
-    dataset("COP", "#e040fb")
-  ]);
+  // Setiap grafik mempunyai fungsi render sendiri agar sumber data dan tampilannya mudah ditelusuri.
+  function renderSuhuKelembaban(rows) {
+    updateChart(suhuKelembabanChart, rows.map(row => formatTime(row.Timestamp)), [
+      values(rows, ["Suhu_Avg", "Suhu", "Temperature"]),
+      values(rows, ["Kelembaban_Avg", "Kelembaban", "Humidity"])
+    ]);
+  }
+
+  function renderDaya(rows) {
+    updateChart(dayaChart, rows.map(row => formatTime(row.Timestamp)), [
+      values(rows, ["Daya", "Daya_Avg", "Watt", "Power"])
+    ]);
+  }
+
+  function renderEnergiFiltered(rows, range) {
+    const labels = rows.map(row => range === "weekly" ? formatDay(row.Timestamp) : formatTime(row.Timestamp));
+    updateChart(energiFilteredChart, labels, [values(rows, ["Energi", "Energi_Avg", "total_energi"]) ]);
+  }
+
+  function renderTdl(rows, range) {
+    const labels = rows.map(row => range === "weekly" ? formatDay(row.Timestamp) : formatTime(row.Timestamp));
+    updateChart(tdlChart, labels, [values(rows, ["TDL", "Tegangan", "Voltage", "Tegangan_Avg", "Voltage_Avg"]) ]);
+  }
+
+  function renderTHI(rows) {
+    updateChart(thiChart, rows.map(row => formatTime(row.Timestamp)), [values(rows, ["THI"]) ]);
+  }
+
+  function renderInlet(rows) {
+    const labels = rows.map(row => formatTime(row.Timestamp));
+    updateChart(inletChart, labels, [
+      values(rows, ["Suhu_Inlet"]), values(rows, ["Kelembaban_Inlet"])
+    ]);
+  }
+
+  function renderOutlet(rows) {
+    const labels = rows.map(row => formatTime(row.Timestamp));
+    updateChart(outletChart, labels, [
+      values(rows, ["Suhu_Outlet"]), values(rows, ["Kelembaban_Outlet"])
+    ]);
+  }
+
+  function renderCOP(rows) {
+    updateChart(copChart, rows.map(row => formatTime(row.Timestamp)), [values(rows, ["COP"]) ]);
+  }
 
   function loadHistorical(rowsSensor, rowsESP2) {
-  if (rowsSensor && rowsSensor.length > 0) {
-    const labels = rowsSensor.map(r => {
-      const d = new Date(r.Timestamp);
-      return d.getHours().toString().padStart(2,"0") + "." +
-             d.getMinutes().toString().padStart(2,"0");
-    });
-    suhuKelembaban.data.labels = labels;
-    suhuKelembaban.data.datasets[0].data = rowsSensor.map(r => r.Suhu_Avg);
-    suhuKelembaban.data.datasets[1].data = rowsSensor.map(r => r.Kelembaban_Avg);
-    suhuKelembaban.update();
+    if (rowsSensor && rowsSensor.length) renderSuhuKelembaban(rowsSensor);
+    if (rowsESP2 && rowsESP2.length) renderDaya(rowsESP2);
   }
 
-  if (rowsESP2 && rowsESP2.length > 0) {
-    const labels = rowsESP2.map(r => {
-      const d = new Date(r.Timestamp);
-      return d.getHours().toString().padStart(2,"0") + "." +
-             d.getMinutes().toString().padStart(2,"0");
-    });
-    energiMonitoring.data.labels = labels;
-    energiMonitoring.data.datasets[0].data = rowsESP2.map(r => r.Energi);
-    energiMonitoring.update();
+  function loadEnergyTdl(rows, range) {
+    if (!rows || !rows.length) return;
+    renderEnergiFiltered(rows, range);
+    renderTdl(rows, range);
   }
-}
 
   function loadGrafik(rowsSensor, rowsESP2) {
-    if (rowsSensor && rowsSensor.length > 0) {
-      const labels = rowsSensor.map(r => {
-        const d = new Date(r.Timestamp);
-        return d.getHours().toString().padStart(2,"0") + "." +
-              d.getMinutes().toString().padStart(2,"0");
-      });
-
-      thiChart.data.labels = labels;
-      thiChart.data.datasets[0].data = rowsSensor.map(r => r.THI);
-      thiChart.update();
-    }
-
-    if (rowsESP2 && rowsESP2.length > 0) {
-      const labels = rowsESP2.map(r => {
-        const d = new Date(r.Timestamp);
-        return d.getHours().toString().padStart(2,"0") + "." +
-              d.getMinutes().toString().padStart(2,"0");
-      });
-
-      inletChart.data.labels = labels;
-      inletChart.data.datasets[0].data = rowsESP2.map(r => r.Suhu_Inlet);
-      inletChart.data.datasets[1].data = rowsESP2.map(r => r.Kelembaban_Inlet);
-      inletChart.update();
-
-      outletChart.data.labels = labels;
-      outletChart.data.datasets[0].data = rowsESP2.map(r => r.Suhu_Outlet);
-      outletChart.data.datasets[1].data = rowsESP2.map(r => r.Kelembaban_Outlet);
-      outletChart.update();
-
-      copChart.data.labels = labels;
-      copChart.data.datasets[0].data = rowsESP2.map(r => r.COP);
-      copChart.update();
+    if (rowsSensor && rowsSensor.length) renderTHI(rowsSensor);
+    if (rowsESP2 && rowsESP2.length) {
+      renderInlet(rowsESP2);
+      renderOutlet(rowsESP2);
+      renderCOP(rowsESP2);
     }
   }
 
   function loadMonthly(rows) {
-    if (!rows || rows.length === 0) return;
-    rows.forEach(r => {
-      const idx = r.bulan - 1;
-      energiBulanan.data.datasets[0].data[idx] = r.total_energi;
+    if (!rows || !rows.length) return;
+    energiBulananChart.data.labels = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
+    energiBulananChart.data.datasets[0].data = new Array(12).fill(0);
+    rows.forEach(row => {
+      const index = Number(row.bulan) - 1;
+      if (index >= 0 && index < 12) energiBulananChart.data.datasets[0].data[index] = Number(row.total_energi) || 0;
     });
-    energiBulanan.update();
+    energiBulananChart.update();
   }
 
-  return { loadHistorical, loadGrafik, loadMonthly };
+  return { loadHistorical, loadEnergyTdl, loadGrafik, loadMonthly };
 })();
