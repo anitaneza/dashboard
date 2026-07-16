@@ -42,6 +42,14 @@
 
 .dot { color: var(--accent); }
 
+.mqtt-indicator {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 400;
+  margin-left: 12px;
+  opacity: 0.8;
+}
+
 /* CARDS */
 .card {
   border-radius: 14px;

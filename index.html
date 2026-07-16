@@ -15,47 +15,46 @@
   <!-- NAVBAR -->
   <nav class="navbar">
     <div class="nav-tabs">
-      <button class="nav-tab active" onclick="switchTab('monitoring')">Monitoring</button>
-      <button class="nav-tab" onclick="switchTab('grafik')">Grafik</button>
-      <button class="nav-tab" onclick="switchTab('config')">Config</button>
+      <button class="nav-tab active" data-tab="monitoring">Monitoring</button>
+      <button class="nav-tab" data-tab="config">Config</button>
     </div>
-    <div class="nav-brand">Dashboard <span class="dot">.</span></div>
+    <div class="nav-brand">Dashboard <span class="dot">.</span> <span id="mqtt-status" class="mqtt-indicator">MQTT: --</span></div>
   </nav>
 
   <!-- TAB MONITORING -->
   <div id="tab-monitoring" class="tab-content active">
 
     <div class="cards-grid">
-      <div class="card card-blue">
+      <div class="card card-daya">
         <div class="card-label">Daya</div>
         <div class="card-value"><span id="val-daya">--</span> <span class="card-unit">Watt</span></div>
       </div>
-      <div class="card card-teal">
+      <div class="card card-energi">
         <div class="card-label">Energi</div>
         <div class="card-value"><span id="val-energi">--</span> <span class="card-unit">kWh</span></div>
       </div>
-      <div class="card card-purple">
+      <div class="card card-thi">
         <div class="card-label">THI Ruangan</div>
         <div class="card-value"><span id="val-thi">--</span> <span class="card-unit" id="val-thi-label"></span></div>
       </div>
-      <div class="card card-pink">
+      <div class="card card-cop">
         <div class="card-label">COP AC</div>
         <div class="card-value"><span id="val-cop">--</span> <span class="card-unit" id="val-cop-label"></span></div>
       </div>
 
-      <div class="card card-orange">
+      <div class="card card-suhu">
         <div class="card-label">Suhu Ruangan</div>
         <div class="card-value"><span id="val-suhu">--</span> <span class="card-unit">°C</span></div>
       </div>
-      <div class="card card-lavender">
+      <div class="card card-kelembaban">
         <div class="card-label">Kelembaban Ruangan</div>
         <div class="card-value"><span id="val-kelembaban">--</span> <span class="card-unit">%</span></div>
       </div>
-      <div class="card card-green" id="card-pir">
+      <div class="card card-pir" id="card-pir">
         <div class="card-label">Status Hunian</div>
         <div class="card-value" id="val-pir">--</div>
       </div>
-      <div class="card card-red">
+      <div class="card card-ac">
         <div class="card-label">Status / Setpoint AC</div>
         <div class="card-value"><span id="val-ac-status">--</span> / <span id="val-setpoint">--</span></div>
       </div>
@@ -77,8 +76,8 @@
       <div class="energy-tdl-toolbar">
         <span id="energy-tdl-title" class="sr-only">Grafik energi dan TDL</span>
         <div class="period-filter" role="group" aria-label="Filter periode grafik energi dan TDL">
-          <button class="period-filter-btn active" type="button" onclick="setEnergyTdlFilter('daily', this)">Harian</button>
-          <button class="period-filter-btn" type="button" onclick="setEnergyTdlFilter('weekly', this)">Mingguan</button>
+          <button class="period-filter-btn active" type="button" data-filter-energy="daily">Harian</button>
+          <button class="period-filter-btn" type="button" data-filter-energy="weekly">Mingguan</button>
         </div>
       </div>
       <div class="energy-tdl-grid">
@@ -95,44 +94,8 @@
 
   </div>
 
-  <!-- TAB GRAFIK -->
-  <div id="tab-grafik" class="tab-content">
-
-    <div class="filter-bar">
-      <span class="filter-label">Rentang:</span>
-      <button class="filter-btn active" onclick="setFilter('today', this)">Hari Ini</button>
-      <button class="filter-btn" onclick="setFilter('7d', this)">7 Hari</button>
-      <button class="filter-btn" onclick="setFilter('30d', this)">30 Hari</button>
-    </div>
-
-    <div class="grafik-grid">
-      <div class="chart-box chart-box-wide">
-        <div class="chart-title">Konsumsi Energi (Bulanan)</div>
-        <canvas id="chart-energi-bulanan"></canvas>
-      </div>
-      <div class="chart-box">
-        <div class="chart-title">THI</div>
-        <canvas id="chart-thi"></canvas>
-      </div>
-
-      <div class="chart-box">
-        <div class="chart-title">Suhu &amp; Kelembaban Inlet</div>
-        <canvas id="chart-inlet"></canvas>
-      </div>
-      <div class="chart-box">
-        <div class="chart-title">Suhu &amp; Kelembaban Outlet</div>
-        <canvas id="chart-outlet"></canvas>
-      </div>
-      <div class="chart-box">
-        <div class="chart-title">COP</div>
-        <canvas id="chart-cop"></canvas>
-      </div>
-    </div>
-
-  </div>
-
   <!-- TAB CONFIG -->
-  <div id="tab-config" class="tab-content">
+  <div id="tab-config" class="tab-content hidden">
 
     <div class="config-grid">
 
@@ -144,14 +107,14 @@
           <div class="toggle-wrap">
             <span class="toggle-label" id="label-mode-ac">Otomatis</span>
             <label class="toggle-switch">
-              <input type="checkbox" id="toggle-mode-ac" onchange="onModeACChange()">
+              <input type="checkbox" id="toggle-mode-ac">
               <span class="slider"></span>
             </label>
           </div>
         </div>
-        <div class="manual-controls" id="manual-controls" style="display:none;">
-          <button class="btn-ac btn-ac-on" onclick="sendACCommand('on')">ON</button>
-          <button class="btn-ac btn-ac-off" onclick="sendACCommand('off')">OFF</button>
+        <div class="manual-controls hidden" id="manual-controls">
+          <button class="btn-ac btn-ac-on" data-ac-cmd="on">ON</button>
+          <button class="btn-ac btn-ac-off" data-ac-cmd="off">OFF</button>
         </div>
       </div>
 
@@ -163,7 +126,7 @@
           <div class="toggle-wrap">
             <span class="toggle-label" id="label-mode-esp">Normal</span>
             <label class="toggle-switch">
-              <input type="checkbox" id="toggle-mode-esp" onchange="onModeESPChange()">
+              <input type="checkbox" id="toggle-mode-esp">
               <span class="slider"></span>
             </label>
           </div>
@@ -171,34 +134,34 @@
       </div>
 
       <!-- IR Capture -->
-      <div class="config-card config-card-wide" id="ir-capture-section" style="opacity:0.4;pointer-events:none;">
+      <div class="config-card config-card-wide hidden" id="ir-capture-section">
         <div class="config-card-title">IR Raw Code Capture</div>
         <div class="config-row">
           <span class="config-row-label">Tombol</span>
           <select id="ir-select" class="config-select">
             <option value="on">ON</option>
             <option value="off">OFF</option>
-            <option value="16">16°C</option>
-            <option value="17">17°C</option>
-            <option value="18">18°C</option>
-            <option value="19">19°C</option>
-            <option value="20">20°C</option>
-            <option value="21">21°C</option>
-            <option value="22">22°C</option>
-            <option value="23">23°C</option>
-            <option value="24">24°C</option>
-            <option value="25">25°C</option>
-            <option value="26">26°C</option>
-            <option value="27">27°C</option>
-            <option value="28">28°C</option>
-            <option value="29">29°C</option>
-            <option value="30">30°C</option>
+            <option value="16">16&#176;C</option>
+            <option value="17">17&#176;C</option>
+            <option value="18">18&#176;C</option>
+            <option value="19">19&#176;C</option>
+            <option value="20">20&#176;C</option>
+            <option value="21">21&#176;C</option>
+            <option value="22">22&#176;C</option>
+            <option value="23">23&#176;C</option>
+            <option value="24">24&#176;C</option>
+            <option value="25">25&#176;C</option>
+            <option value="26">26&#176;C</option>
+            <option value="27">27&#176;C</option>
+            <option value="28">28&#176;C</option>
+            <option value="29">29&#176;C</option>
+            <option value="30">30&#176;C</option>
           </select>
-          <button class="btn-capture" onclick="startCapture()">Mulai Capture</button>
+          <button class="btn-capture" data-capture="start">Mulai Capture</button>
         </div>
         <div class="capture-status" id="capture-status">Idle</div>
         <textarea class="capture-result" id="capture-result" readonly placeholder="Hasil capture akan muncul di sini..."></textarea>
-        <button class="btn-save" id="btn-save-ir" onclick="confirmCapture()" style="display:none;">Simpan</button>
+        <button class="btn-save hidden" id="btn-save-ir" data-capture="confirm">Simpan</button>
       </div>
 
       <!-- WiFi Config -->
@@ -212,19 +175,20 @@
           <span class="config-row-label">Password</span>
           <input type="password" id="wifi-pass" class="config-input" placeholder="Password" />
         </div>
-        <button class="btn-save" onclick="sendWifiConfig()">Simpan</button>
+        <button class="btn-save" data-wifi="send">Simpan</button>
       </div>
 
     </div>
   </div>
 
-  <script src="js/config.js"></script>
-  <script src="js/mqtt.js"></script>
-  <script src="js/api.js"></script>
-  <script src="js/charts.js"></script>
-  <script src="js/monitoring.js"></script>
-  <script src="js/grafik.js"></script>
-  <script src="js/config-tab.js"></script>
+  <script src="js/core/config.js"></script>
+  <script src="js/core/helpers.js"></script>
+  <script src="js/core/mqtt.js"></script>
+  <script src="js/core/api.js"></script>
+  <script src="js/ui/notification.js"></script>
+  <script src="js/ui/monitoring.js"></script>
+  <script src="js/ui/charts.js"></script>
+  <script src="js/ui/config-tab.js"></script>
   <script src="js/app.js"></script>
 
 </body>

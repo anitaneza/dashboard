@@ -1,58 +1,106 @@
-async function init() {
-  // Koneksi MQTT
+let pollTimer = null;
+
+function init() {
   MQTTClient.connect();
-
-  // Bind semua handler MQTT
   Monitoring.bindMQTT();
-  bindCaptureResult();
+  ConfigTab.bindCaptureResult();
 
-  // Load data historis untuk grafik monitoring
-  const [sensor, esp2] = await Promise.all([
-    API.getToday(),
-    API.getTodayEnergi()
-  ]);
-  Charts.loadHistorical(sensor, esp2);
-  loadEnergyTdl("daily");
+  MQTTClient.onConnectionChange((connected) => {
+    const indicator = document.getElementById("mqtt-status");
+    if (indicator) {
+      indicator.textContent = connected ? "MQTT: Terhubung" : "MQTT: Terputus";
+      indicator.style.color = connected ? "var(--success)" : "var(--danger)";
+    }
+  });
+
+  loadInitialData();
+  startPolling();
+  bindEvents();
 }
 
-let grafikLoaded = false;
-
-function switchTab(name) {
-  document.querySelectorAll(".tab-content").forEach(el => el.classList.remove("active"));
-  document.querySelectorAll(".nav-tab").forEach(el => el.classList.remove("active"));
-  document.getElementById("tab-" + name).classList.add("active");
-  event.target.classList.add("active");
-
-  // Load grafik pertama kali tab grafik dibuka
-  if (name === "grafik" && !grafikLoaded) {
-    grafikLoaded = true;
-    loadGrafikTab("daily");
+async function loadInitialData() {
+  try {
+    const [sensor, esp2] = await Promise.all([
+      API.getToday(),
+      API.getTodayEnergi()
+    ]);
+    Charts.loadHistorical(sensor, esp2);
+    loadEnergyTdl("daily");
+  } catch (e) {
+    // handled by API notification
   }
 }
 
-// Polling setiap 1 menit untuk update grafik monitoring
-setInterval(async () => {
-  const [sensor, esp2] = await Promise.all([
-    API.getToday(),
-    API.getTodayEnergi()
-  ]);
-  Charts.loadHistorical(sensor, esp2);
-}, 60000);
+function bindEvents() {
+  document.querySelector(".navbar")?.addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-tab]");
+    if (btn) switchTab(btn.dataset.tab);
+  });
 
-let energyTdlRange = "daily";
+  document.querySelector("[data-filter-energy]")?.closest(".energy-tdl-toolbar")?.addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-filter-energy]");
+    if (btn) loadEnergyTdl(btn.dataset.filterEnergy, btn);
+  });
 
-async function loadEnergyTdl(range) {
-  const rows = await API.getESP2(range);
-  Charts.loadEnergyTdl(rows, range);
+  document.getElementById("toggle-mode-ac")?.addEventListener("change", ConfigTab.onModeACChange);
+  document.getElementById("toggle-mode-esp")?.addEventListener("change", ConfigTab.onModeESPChange);
+
+  document.querySelector("[data-ac-cmd]")?.closest(".manual-controls")?.addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-ac-cmd]");
+    if (btn) ConfigTab.sendACCommand(btn.dataset.acCmd);
+  });
+
+  document.querySelector("[data-capture='start']")?.addEventListener("click", ConfigTab.startCapture);
+  document.querySelector("[data-capture='confirm']")?.addEventListener("click", ConfigTab.confirmCapture);
+  document.querySelector("[data-wifi='send']")?.addEventListener("click", ConfigTab.sendWifiConfig);
 }
 
-function setEnergyTdlFilter(range, button) {
-  energyTdlRange = range;
-  document.querySelectorAll(".period-filter-btn").forEach(btn => btn.classList.remove("active"));
-  button.classList.add("active");
-  document.getElementById("title-energi-filtered").textContent =
-    `Konsumsi Energi (${range === "daily" ? "Harian" : "Mingguan"})`;
-  loadEnergyTdl(range);
+function switchTab(name) {
+  document.querySelectorAll(".tab-content").forEach(el => el.classList.remove("active"));
+  document.querySelectorAll("[data-tab]").forEach(el => el.classList.remove("active"));
+  const tab = document.getElementById("tab-" + name);
+  const btn = document.querySelector(`[data-tab="${name}"]`);
+  if (tab) tab.classList.add("active");
+  if (btn) btn.classList.add("active");
 }
 
-init();
+async function loadEnergyTdl(range, button) {
+  if (button) {
+    document.querySelectorAll("[data-filter-energy]").forEach(b => b.classList.remove("active"));
+    button.classList.add("active");
+  }
+  const title = document.getElementById("title-energi-filtered");
+  if (title) title.textContent = `Konsumsi Energi (${range === "daily" ? "Harian" : "Mingguan"})`;
+  try {
+    const rows = await API.getTDL(range);
+    Charts.loadEnergyTdl(rows, range);
+  } catch (e) {
+    // handled by API notification
+  }
+}
+
+function startPolling() {
+  async function poll() {
+    try {
+      const [sensor, esp2] = await Promise.all([
+        API.getToday(),
+        API.getTodayEnergi()
+      ]);
+      Charts.loadHistorical(sensor, esp2);
+    } catch (e) {
+      // handled by API notification
+    }
+  }
+  pollTimer = setInterval(poll, 60000);
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+      clearInterval(pollTimer);
+    } else {
+      poll();
+      pollTimer = setInterval(poll, 60000);
+    }
+  });
+}
+
+document.addEventListener("DOMContentLoaded", init);
