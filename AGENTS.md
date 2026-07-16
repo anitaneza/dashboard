@@ -21,31 +21,43 @@ Loaded from CDN in `index.html`:
 Do not assume these are installed locally.
 
 ## Backend & data
-- Historical data comes from a Google Apps Script endpoint (`CONFIG.APPS_SCRIPT_URL` in `js/config.js`).
-- Real-time data and commands use MQTT topics defined in `js/config.js`.
+- Historical data comes from a Google Apps Script endpoint (`CONFIG.APPS_SCRIPT_URL` in `js/core/config.js`).
+- Real-time data and commands use MQTT topics defined in `js/core/config.js`.
 - If the dashboard appears blank or charts never load, check the browser network tab for Apps Script CORS/errors and MQTT connection failures first.
 
 ## Code architecture
-- `js/config.js` — single source of truth: Apps Script URL, MQTT broker, topic names.
-- `js/mqtt.js` — MQTT client wrapper; auto-subscribes to all topics on connect.
-- `js/api.js` — fetch wrapper for Google Sheets-backed Apps Script endpoints.
-- `js/charts.js` — Chart.js setup for the monitoring tab.
-- `js/monitoring.js` — live metric card updates and MQTT handlers.
-- `js/grafik.js` — chart rendering for the "Grafik" tab.
-- `js/config-tab.js` — config tab UI handlers and command publishing.
-- `js/app.js` — entry point: connects MQTT, binds handlers, polls historical data every 60 s.
+### Core layer (`js/core/`) — pure logic, no DOM
+- `js/core/config.js` — single source of truth: Apps Script URL, MQTT broker, topic names. Frozen with Object.freeze().
+- `js/core/helpers.js` — pure functions: THI/COP calculation, date formatting, classification, constants.
+- `js/core/mqtt.js` — MQTT client wrapper with exponential backoff reconnect, Promise-based publish(), connection status callbacks.
+- `js/core/api.js` — fetch wrapper with error handling and user-facing notifications.
+
+### UI layer (`js/ui/`) — DOM manipulation & Chart.js
+- `js/ui/notification.js` — centralized toast notification system (replaces alert()).
+- `js/ui/monitoring.js` — live metric card updates with cached DOM references and MQTT handlers.
+- `js/ui/charts.js` — Chart.js lazy initialization (getOrCreate pattern). Monitoring + energy/TDL charts only.
+- `js/ui/config-tab.js` — config tab UI handlers (AC mode, ESP mode, IR capture, WiFi — currently disabled).
+
+### Entry point
+- `js/app.js` — entry point: connects MQTT, binds handlers, event delegation, Page Visibility-aware polling.
 
 ## Important conventions
-- Script load order in `index.html` matters (`config.js` must load first; `app.js` last).
-- All JS is global-scope vanilla JS; modules are simple IIFEs (`API`, `MQTTClient`, `Charts`, `Monitoring`).
+- Script load order in `index.html` matters (`core/config.js` → `core/helpers.js` → `core/mqtt.js` → `core/api.js` → `ui/notification.js` → `ui/monitoring.js` → `ui/charts.js` → `ui/config-tab.js` → `app.js`).
+- All JS is IIFE-based, exposed via `window.Dashboard.*` (`window.Dashboard.MQTTClient`, `window.Dashboard.API`, etc.).
 - Use the `CONFIG.TOPICS` map for any new MQTT topic; do not hard-code topic strings elsewhere.
+- Event handling uses delegation via `data-*` attributes (e.g., `data-tab`, `data-ac-cmd`, `data-filter-energy`). No inline `onclick`/`onchange`.
 - Keep UI text in Indonesian; the dashboard language is `id`.
-- Several functions are called directly from HTML `onclick` handlers and must remain global: `switchTab`, `setFilter`, `onModeACChange`, `sendACCommand`, `onModeESPChange`, `startCapture`, `confirmCapture`, `sendWifiConfig`, `bindCaptureResult`.
+- CSS split into `base.css` (variables, reset, grid, responsive) and `components.css` (all component styles). Semantic class names only (e.g., `.card-daya`, `.card-thi`).
 
 ## IR capture flow
-- `CAPTURE` — publishes the selected button/temperature to start capturing.
-- `CAPTURE_RESULT` — ESP publishes the raw IR code back here; `bindCaptureResult()` displays it.
-- `CAPTURE_CONFIRM` — confirms/saves the captured code. `sendACCommand()` also reuses this topic to send ON/OFF/setpoint commands.
+- `CAPTURE` — publishes the selected button to start capturing.
+- `CAPTURE_RESULT` — ESP publishes the raw IR code back here; `ConfigTab.bindCaptureResult()` displays it.
+- `CAPTURE_CONFIRM` — confirms/saves the captured code.
+- AC ON/OFF commands use a separate topic `AC_COMMAND` (not `CAPTURE_CONFIRM`).
+
+## Security notes
+- WiFi config feature is currently DISABLED (`sendWifiConfig` shows a notification only). Sending SSID/password via public MQTT broker needs a secure implementation (ESP AP mode).
+- `CONFIG` and `CONFIG.TOPICS` are frozen at init time to prevent accidental mutation.
 
 ## What not to expect
 - No lint, formatter, typecheck, or CI config.
