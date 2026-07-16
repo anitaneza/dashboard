@@ -1,0 +1,99 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #111214;
+  --bg2: #1a1c20;
+  --bg3: #22252b;
+  --border: rgba(255,255,255,0.07);
+  --text: #f0f0f0;
+  --text-muted: #888;
+  --accent: #00c8a0;
+  --font-display: 'Rajdhani', sans-serif;
+  --font-body: 'Inter', sans-serif;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  min-height: 100vh;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+}
+
+.hidden { display: none !important; }
+
+/* TAB CONTENT */
+.tab-content { display: none; padding: 20px 24px; }
+.tab-content.active { display: block; }
+
+/* GRID LAYOUTS */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.charts-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+/* ENERGI DAN TDL */
+.energy-tdl-section { margin-top: 38px; }
+
+.section-divider {
+  height: 2px;
+  background: rgba(255,255,255,0.22);
+  margin: 0 2px 28px;
+}
+
+.energy-tdl-toolbar { margin-bottom: 12px; }
+
+.energy-tdl-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+/* FILTER BAR */
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.filter-label {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* CONFIG GRID */
+.config-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+  .cards-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+  .cards-grid, .charts-row, .energy-tdl-grid, .config-grid { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion) {
+  .slider, .slider::before, .filter-btn, .btn-save, .btn-ac, .btn-capture,
+  .nav-tab, input:checked + .slider, input:checked + .slider::before { transition: none; }
+}
