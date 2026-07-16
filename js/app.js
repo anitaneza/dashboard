@@ -13,6 +13,7 @@ function init() {
     }
   });
 
+  Charts.initMonitoring();
   loadInitialData();
   startPolling();
   bindEvents();

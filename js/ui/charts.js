@@ -183,6 +183,13 @@ const Charts = (() => {
     updateChart(chart, rows.map(row => formatTime(row.Timestamp)), [values(rows, ["COP"])]);
   }
 
+  function initMonitoring() {
+    getSuhuKelembabanChart();
+    getDayaChart();
+    getEnergiFilteredChart();
+    getTDLChart();
+  }
+
   function loadHistorical(rowsSensor, rowsESP2) {
     if (rowsSensor && rowsSensor.length) renderSuhuKelembaban(rowsSensor);
     if (rowsESP2 && rowsESP2.length) renderDaya(rowsESP2);
@@ -194,7 +201,7 @@ const Charts = (() => {
     renderTdl(rows, range);
   }
 
-  return { loadHistorical, loadEnergyTdl };
+  return { initMonitoring, loadHistorical, loadEnergyTdl };
 })();
 window.Dashboard = window.Dashboard || {};
 window.Dashboard.Charts = Charts;
