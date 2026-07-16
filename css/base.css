@@ -93,7 +93,3 @@ body {
   .cards-grid, .charts-row, .energy-tdl-grid, .config-grid { grid-template-columns: 1fr; }
 }
 
-@media (prefers-reduced-motion) {
-  .slider, .slider::before, .filter-btn, .btn-save, .btn-ac, .btn-capture,
-  .nav-tab, input:checked + .slider, input:checked + .slider::before { transition: none; }
-}
