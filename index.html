@@ -105,17 +105,10 @@
         <div class="config-card-title">Mode AC</div>
         <div class="config-row">
           <span class="config-row-label">Mode</span>
-          <div class="toggle-wrap">
-            <span class="toggle-label" id="label-mode-ac">Otomatis</span>
-            <label class="toggle-switch">
-              <input type="checkbox" id="toggle-mode-ac">
-              <span class="slider"></span>
-            </label>
+          <div class="mode-group" role="group" aria-label="Mode AC">
+            <button class="mode-btn active" type="button" data-mode-ac="auto">Otomatis</button>
+            <button class="mode-btn" type="button" data-mode-ac="manual">Manual</button>
           </div>
-        </div>
-        <div class="manual-controls hidden" id="manual-controls">
-          <button class="btn-ac btn-ac-on" data-ac-cmd="on">ON</button>
-          <button class="btn-ac btn-ac-off" data-ac-cmd="off">OFF</button>
         </div>
       </div>
 
@@ -124,22 +117,19 @@
         <div class="config-card-title">Mode ESP</div>
         <div class="config-row">
           <span class="config-row-label">Mode</span>
-          <div class="toggle-wrap">
-            <span class="toggle-label" id="label-mode-esp">Normal</span>
-            <label class="toggle-switch">
-              <input type="checkbox" id="toggle-mode-esp">
-              <span class="slider"></span>
-            </label>
+          <div class="mode-group" role="group" aria-label="Mode ESP">
+            <button class="mode-btn active" type="button" data-mode-esp="normal">Normal</button>
+            <button class="mode-btn" type="button" data-mode-esp="config">Config</button>
           </div>
         </div>
       </div>
 
       <!-- IR Capture -->
-      <div class="config-card config-card-wide hidden" id="ir-capture-section">
+      <div class="config-card config-card-wide ir-frozen" id="ir-capture-section">
         <div class="config-card-title">IR Raw Code Capture</div>
         <div class="config-row">
           <span class="config-row-label">Tombol</span>
-          <select id="ir-select" class="config-select">
+          <select id="ir-select" class="config-select" disabled>
             <option value="on">ON</option>
             <option value="off">OFF</option>
             <option value="16">16&#176;C</option>
@@ -158,25 +148,11 @@
             <option value="29">29&#176;C</option>
             <option value="30">30&#176;C</option>
           </select>
-          <button class="btn-capture" data-capture="start">Mulai Capture</button>
+          <button class="btn-capture" data-capture="start" disabled>Mulai Capture</button>
         </div>
         <div class="capture-status" id="capture-status">Idle</div>
         <textarea class="capture-result" id="capture-result" readonly placeholder="Hasil capture akan muncul di sini..."></textarea>
-        <button class="btn-save hidden" id="btn-save-ir" data-capture="confirm">Simpan</button>
-      </div>
-
-      <!-- WiFi Config -->
-      <div class="config-card">
-        <div class="config-card-title">WiFi Config</div>
-        <div class="config-row">
-          <span class="config-row-label">SSID</span>
-          <input type="text" id="wifi-ssid" class="config-input" placeholder="Nama WiFi" />
-        </div>
-        <div class="config-row">
-          <span class="config-row-label">Password</span>
-          <input type="password" id="wifi-pass" class="config-input" placeholder="Password" />
-        </div>
-        <button class="btn-save" data-wifi="send">Simpan</button>
+        <button class="btn-save hidden" id="btn-save-ir" data-capture="confirm" disabled>Simpan</button>
       </div>
 
     </div>

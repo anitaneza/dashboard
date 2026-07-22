@@ -1,27 +1,32 @@
 const ConfigTab = (() => {
-  function onModeACChange() {
-    const checked = document.getElementById("toggle-mode-ac").checked;
-    document.getElementById("label-mode-ac").textContent = checked ? "Manual" : "Otomatis";
-    document.getElementById("manual-controls").classList.toggle("hidden", !checked);
-    MQTTClient.publish("MODE_AC", checked ? "manual" : "auto").catch(e => {
+  function setModeAC(mode) {
+    document.querySelectorAll("[data-mode-ac]").forEach(btn => {
+      btn.classList.toggle("active", btn.dataset.modeAc === mode);
+    });
+    MQTTClient.publish("MODE_AC", mode).catch(e => {
       Notification.error("Gagal mengirim mode AC: " + e.message);
     });
   }
 
-  function sendACCommand(cmd) {
-    MQTTClient.publish("AC_COMMAND", cmd).catch(e => {
-      Notification.error("Gagal mengirim perintah AC: " + e.message);
+  function setModeESP(mode) {
+    document.querySelectorAll("[data-mode-esp]").forEach(btn => {
+      btn.classList.toggle("active", btn.dataset.modeEsp === mode);
+    });
+    setIRDisabled(mode === "normal");
+    MQTTClient.publish("MODE_ESP", mode).catch(e => {
+      Notification.error("Gagal mengirim mode ESP: " + e.message);
     });
   }
 
-  function onModeESPChange() {
-    const checked = document.getElementById("toggle-mode-esp").checked;
-    document.getElementById("label-mode-esp").textContent = checked ? "Config" : "Normal";
-    const irSection = document.getElementById("ir-capture-section");
-    if (irSection) irSection.classList.toggle("hidden", !checked);
-    MQTTClient.publish("MODE_ESP", checked ? "config" : "normal").catch(e => {
-      Notification.error("Gagal mengirim mode ESP: " + e.message);
-    });
+  function setIRDisabled(disabled) {
+    const section = document.getElementById("ir-capture-section");
+    if (!section) return;
+    section.classList.toggle("ir-frozen", disabled);
+    document.getElementById("ir-select").disabled = disabled;
+    const startBtn = document.querySelector("[data-capture='start']");
+    if (startBtn) startBtn.disabled = disabled;
+    const saveBtn = document.getElementById("btn-save-ir");
+    if (saveBtn) saveBtn.disabled = disabled;
   }
 
   function startCapture() {
@@ -53,11 +58,7 @@ const ConfigTab = (() => {
     });
   }
 
-  function sendWifiConfig() {
-    Notification.info("Fitur WiFi config belum tersedia");
-  }
-
-  return { onModeACChange, sendACCommand, onModeESPChange, startCapture, confirmCapture, bindCaptureResult, sendWifiConfig };
+  return { setModeAC, setModeESP, startCapture, confirmCapture, bindCaptureResult };
 })();
 window.Dashboard = window.Dashboard || {};
 window.Dashboard.ConfigTab = ConfigTab;

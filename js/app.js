@@ -72,17 +72,18 @@ function bindEvents() {
     if (btn) loadEnergyTdl(btn.dataset.filterEnergy, btn);
   });
 
-  document.getElementById("toggle-mode-ac")?.addEventListener("change", ConfigTab.onModeACChange);
-  document.getElementById("toggle-mode-esp")?.addEventListener("change", ConfigTab.onModeESPChange);
+  document.querySelector("[data-mode-ac]")?.closest(".config-row")?.addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-mode-ac]");
+    if (btn) ConfigTab.setModeAC(btn.dataset.modeAc);
+  });
 
-  document.querySelector("[data-ac-cmd]")?.closest(".manual-controls")?.addEventListener("click", (e) => {
-    const btn = e.target.closest("[data-ac-cmd]");
-    if (btn) ConfigTab.sendACCommand(btn.dataset.acCmd);
+  document.querySelector("[data-mode-esp]")?.closest(".config-row")?.addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-mode-esp]");
+    if (btn) ConfigTab.setModeESP(btn.dataset.modeEsp);
   });
 
   document.querySelector("[data-capture='start']")?.addEventListener("click", ConfigTab.startCapture);
   document.querySelector("[data-capture='confirm']")?.addEventListener("click", ConfigTab.confirmCapture);
-  document.querySelector("[data-wifi='send']")?.addEventListener("click", ConfigTab.sendWifiConfig);
 }
 
 function switchTab(name) {
