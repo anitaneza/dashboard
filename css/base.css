@@ -88,40 +88,38 @@ body {
 @media (max-width: 768px) {
   .charts-row, .energy-tdl-grid, .config-grid { grid-template-columns: 1fr; }
 
-  .tab-content { padding: 12px 10px; }
+  .tab-content { padding: 10px 8px; }
 
-  .cards-grid { gap: 5px; }
+  .cards-grid { gap: 4px; margin-bottom: 10px; }
 
   .card {
-    padding: 8px 5px;
-    min-height: 62px;
-    border-radius: 6px;
+    padding: 6px 4px;
+    min-height: 48px;
+    border-radius: 5px;
   }
 
-  .card-label { font-size: 9px; }
+  .card-label { font-size: 8px; }
 
   .card-value {
-    font-size: 16px;
+    font-size: 13px;
     flex-direction: column;
     gap: 0;
     line-height: 1.1;
   }
 
-  .card-unit { font-size: 9px; }
+  .card-unit { font-size: 7px; }
 
-  .nav-brand { font-size: 14px; }
+  .nav-brand { font-size: 13px; }
 
   .mqtt-indicator { display: none; }
-
-  .cards-grid { margin-bottom: 12px; }
 }
 
 @media (max-width: 480px) {
-  .card-value { font-size: 13px; }
-  .card { padding: 6px 3px; min-height: 54px; border-radius: 4px; }
-  .card-label { font-size: 8px; }
-  .card-unit { font-size: 8px; }
-  .cards-grid { gap: 4px; }
-  .nav-brand { font-size: 12px; }
+  .card-value { font-size: 11px; }
+  .card { padding: 4px 3px; min-height: 40px; border-radius: 3px; }
+  .card-label { font-size: 7px; }
+  .card-unit { font-size: 7px; }
+  .cards-grid { gap: 3px; }
+  .nav-brand { font-size: 11px; }
 }
 
