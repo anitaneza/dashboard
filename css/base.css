@@ -49,9 +49,9 @@ body {
 
 /* CARD — mobile-first */
 .card {
-  border-radius: 10px;
-  padding: 14px 14px;
-  min-height: 80px;
+  border-radius: 8px;
+  padding: 10px 10px;
+  min-height: 62px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -59,24 +59,24 @@ body {
 
 .card-label {
   font-family: var(--font-body);
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 500;
   opacity: 0.85;
 }
 
 .card-value {
   font-family: var(--font-display);
-  font-size: clamp(18px, 5vw, 38px);
+  font-size: clamp(14px, 3.5vw, 38px);
   font-weight: 700;
   line-height: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 3px;
 }
 
 .card-unit {
-  font-size: clamp(10px, 2.5vw, 16px);
+  font-size: clamp(8px, 2vw, 16px);
   font-weight: 500;
   opacity: 0.85;
 }
@@ -132,9 +132,10 @@ body {
 
   .cards-grid { gap: 12px; margin-bottom: 18px; }
 
-  .card { padding: 16px 18px; min-height: 94px; border-radius: 12px; }
-  .card-label { font-size: 12px; }
-  .card-unit { font-size: 14px; }
+  .card { padding: 14px 16px; min-height: 80px; border-radius: 10px; }
+  .card-label { font-size: 11px; }
+  .card-value { font-size: clamp(18px, 3vw, 38px); }
+  .card-unit { font-size: clamp(10px, 1.8vw, 16px); gap: 4px; }
 
   .charts-row { gap: 12px; }
 
