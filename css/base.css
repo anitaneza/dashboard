@@ -29,39 +29,79 @@ body {
 
 .hidden { display: none !important; }
 
-/* TAB CONTENT */
-.tab-content { display: none; padding: 20px 24px; }
-.tab-content.active { display: block; }
-
-/* GRID LAYOUTS */
+/* GRID LAYOUTS — mobile-first */
 .cards-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 14px;
-  margin-bottom: 20px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 16px;
 }
 
 .charts-row {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+/* TAB CONTENT — mobile-first */
+.tab-content { display: none; padding: 12px 10px; }
+.tab-content.active { display: block; }
+
+/* CARD — mobile-first */
+.card {
+  border-radius: 10px;
+  padding: 14px 14px;
+  min-height: 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card-label {
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 500;
+  opacity: 0.85;
+}
+
+.card-value {
+  font-family: var(--font-display);
+  font-size: clamp(18px, 5vw, 38px);
+  font-weight: 700;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.card-unit {
+  font-size: clamp(10px, 2.5vw, 16px);
+  font-weight: 500;
+  opacity: 0.85;
 }
 
 /* ENERGI DAN TDL */
-.energy-tdl-section { margin-top: 38px; }
+.energy-tdl-section { margin-top: 28px; }
 
 .section-divider {
   height: 2px;
   background: rgba(255,255,255,0.22);
-  margin: 0 2px 28px;
+  margin: 0 2px 20px;
 }
 
-.energy-tdl-toolbar { margin-bottom: 12px; }
+.energy-tdl-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
 
 .energy-tdl-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
+  grid-template-columns: 1fr;
+  gap: 10px;
 }
 
 /* FILTER BAR */
@@ -77,90 +117,66 @@ body {
   color: var(--text-muted);
 }
 
-/* CONFIG GRID */
+/* CONFIG GRID — mobile-first */
 .config-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
+  grid-template-columns: 1fr;
+  gap: 10px;
 }
 
-/* RESPONSIVE */
-@media (max-width: 1024px) {
-  .cards-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.config-card-wide { grid-column: auto; }
 
+/* TABLET (≥600px) */
+@media (min-width: 600px) {
   .tab-content { padding: 16px 14px; }
 
-  .card { padding: 16px 18px; min-height: 90px; }
-  .card-value { font-size: 28px; }
+  .cards-grid { gap: 12px; margin-bottom: 18px; }
+
+  .card { padding: 16px 18px; min-height: 94px; border-radius: 12px; }
   .card-label { font-size: 12px; }
   .card-unit { font-size: 14px; }
+
+  .charts-row { gap: 12px; }
+
+  .energy-tdl-section { margin-top: 32px; }
+  .section-divider { margin: 0 2px 24px; }
+  .energy-tdl-toolbar { margin-bottom: 12px; }
+  .energy-tdl-grid { gap: 12px; }
+
+  .config-grid { gap: 12px; }
 }
 
-@media (max-width: 768px) {
-  .charts-row, .energy-tdl-grid, .config-grid { grid-template-columns: 1fr; }
-  .config-card-wide { grid-column: auto; }
+/* DESKTOP (≥1024px) */
+@media (min-width: 1024px) {
+  .tab-content { padding: 20px 24px; }
 
-  .tab-content { padding: 10px 8px; }
+  .cards-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 20px;
+  }
 
-  .cards-grid { gap: 8px; margin-bottom: 12px; }
+  .card { padding: 20px 22px; min-height: 110px; border-radius: 14px; }
+  .card-label { font-size: 13px; }
+  .card-unit { font-size: 16px; }
 
-  .card { padding: 12px 14px; min-height: 76px; border-radius: 8px; }
-  .card-label { font-size: 10px; }
-  .card-value { font-size: 20px; flex-direction: row; gap: 4px; line-height: inherit; }
-  .card-unit { font-size: 11px; }
+  .charts-row {
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
 
-  .nav-tab { font-size: 13px; padding: 8px 12px; }
-  .nav-brand { font-size: 13px; }
-  .mqtt-indicator { display: none; }
+  .energy-tdl-section { margin-top: 38px; }
+  .section-divider { margin: 0 2px 28px; }
 
-  .period-filter-btn { min-width: 72px; padding: 8px 10px; font-size: 12px; }
-  .energy-tdl-toolbar { flex-wrap: wrap; gap: 6px; }
-  .month-select { margin-left: 0; min-width: 100px; }
+  .energy-tdl-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+  }
 
-  .chart-box { min-height: 220px; padding: 14px 14px; }
-  .chart-box-filtered { min-height: 240px; }
-  .chart-title { font-size: 13px; margin-bottom: 10px; }
-
-  .section-divider { margin: 0 2px 18px; }
-  .energy-tdl-section { margin-top: 24px; }
-
-  .config-card { padding: 16px 16px; }
-  .config-card-title { font-size: 14px; margin-bottom: 12px; }
-  .config-row { gap: 10px; margin-bottom: 10px; }
-  .config-row-label { font-size: 12px; width: 60px; }
-  .mode-btn { min-width: 80px; padding: 8px 14px; font-size: 13px; }
-
-  .ir-frozen { opacity: 0.4; }
-  .capture-status { font-size: 12px; }
-  .capture-result { height: 60px; font-size: 11px; }
-  .btn-capture { padding: 6px 12px; font-size: 13px; }
-  .btn-save { padding: 7px 16px; font-size: 13px; }
-
-  .auth-modal { padding: 24px 20px; width: 300px; }
-  .auth-title { font-size: 16px; }
-  .auth-input { padding: 8px 12px; font-size: 13px; }
-  .auth-btn { padding: 8px; font-size: 13px; }
-}
-
-@media (max-width: 480px) {
-  .tab-content { padding: 8px 6px; }
-  .cards-grid { gap: 6px; }
-  .card { padding: 10px 10px; min-height: 66px; border-radius: 6px; }
-  .card-value { font-size: 17px; }
-  .card-label { font-size: 9px; }
-  .card-unit { font-size: 10px; }
-  .nav-tab { font-size: 12px; padding: 6px 10px; }
-  .nav-brand { font-size: 11px; }
-
-  .chart-box { min-height: 180px; padding: 12px 10px; }
-  .chart-box-filtered { min-height: 200px; }
-  .chart-title { font-size: 12px; }
-
-  .period-filter-btn { min-width: 60px; padding: 6px 8px; font-size: 11px; }
-
-  .config-card { padding: 12px 12px; }
-  .config-card-title { font-size: 13px; }
-  .config-row-label { font-size: 11px; width: 50px; }
-  .mode-btn { min-width: 68px; padding: 6px 10px; font-size: 12px; }
+  .config-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .config-card-wide { grid-column: 1 / 3; }
 }
 
