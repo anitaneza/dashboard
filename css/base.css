@@ -85,46 +85,45 @@ body {
 }
 
 /* RESPONSIVE */
+@media (max-width: 1024px) {
+  .cards-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+
+  .tab-content { padding: 16px 14px; }
+
+  .card { padding: 16px 18px; min-height: 94px; }
+  .card-value { font-size: 28px; }
+  .card-label { font-size: 12px; }
+  .card-unit { font-size: 14px; }
+}
+
 @media (max-width: 768px) {
   .charts-row, .energy-tdl-grid, .config-grid { grid-template-columns: 1fr; }
+  .config-card-wide { grid-column: auto; }
 
-  .tab-content { padding: 8px 6px; }
+  .tab-content { padding: 12px 10px; }
 
-  .cards-grid { gap: 5px; margin-bottom: 10px; }
+  .cards-grid { gap: 10px; margin-bottom: 14px; }
 
-  .card {
-    padding: 6px 4px;
-    min-height: 52px;
-    border-radius: 5px;
-  }
-
-  .card-label { font-size: 10px; }
-
-  .card-value {
-    font-size: 16px;
-    flex-direction: column;
-    gap: 0;
-    line-height: 1.1;
-  }
-
-  .card-ac .card-value {
-    flex-direction: row;
-    gap: 2px;
-  }
-
+  .card { padding: 14px 16px; min-height: 82px; border-radius: 10px; }
+  .card-label { font-size: 11px; }
+  .card-value { font-size: 22px; flex-direction: row; gap: 4px; line-height: inherit; }
   .card-unit { font-size: 12px; }
 
-  .nav-brand { font-size: 12px; }
-
+  .nav-brand { font-size: 14px; }
   .mqtt-indicator { display: none; }
+
+  .period-filter-btn { min-width: 80px; padding: 9px 12px; font-size: 13px; }
+  .energy-tdl-toolbar { flex-wrap: wrap; gap: 8px; }
+  .month-select { margin-left: 0; min-width: 120px; }
 }
 
 @media (max-width: 480px) {
-  .card-value { font-size: 14px; }
-  .card { padding: 5px 3px; min-height: 44px; }
-  .card-label { font-size: 9px; }
-  .card-unit { font-size: 10px; }
-  .cards-grid { gap: 4px; }
-  .nav-brand { font-size: 10px; }
+  .tab-content { padding: 10px 8px; }
+  .cards-grid { gap: 8px; }
+  .card { padding: 12px 12px; min-height: 72px; border-radius: 8px; }
+  .card-value { font-size: 18px; }
+  .card-label { font-size: 10px; }
+  .card-unit { font-size: 11px; }
+  .nav-brand { font-size: 12px; }
 }
 
