@@ -107,6 +107,11 @@ body {
     line-height: 1.1;
   }
 
+  .card-ac .card-value {
+    flex-direction: row;
+    gap: 2px;
+  }
+
   .card-unit { font-size: 12px; }
 
   .nav-brand { font-size: 12px; }
