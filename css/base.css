@@ -87,5 +87,38 @@ body {
 /* RESPONSIVE */
 @media (max-width: 768px) {
   .charts-row, .energy-tdl-grid, .config-grid { grid-template-columns: 1fr; }
+
+  .tab-content { padding: 12px 10px; }
+
+  .cards-grid { gap: 6px; }
+
+  .card {
+    padding: 10px 8px;
+    min-height: 72px;
+    border-radius: 8px;
+  }
+
+  .card-label { font-size: 10px; }
+
+  .card-value {
+    font-size: 20px;
+    gap: 3px;
+  }
+
+  .card-unit { font-size: 10px; }
+
+  .nav-brand { font-size: 14px; }
+
+  .mqtt-indicator { display: none; }
+
+  .cards-grid { margin-bottom: 12px; }
+}
+
+@media (max-width: 480px) {
+  .card-value { font-size: 16px; }
+  .card { padding: 8px 6px; min-height: 64px; }
+  .card-label { font-size: 9px; }
+  .card-unit { font-size: 9px; }
+  .nav-brand { font-size: 12px; }
 }
 
