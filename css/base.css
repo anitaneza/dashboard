@@ -90,7 +90,7 @@ body {
 
   .tab-content { padding: 16px 14px; }
 
-  .card { padding: 16px 18px; min-height: 94px; }
+  .card { padding: 16px 18px; min-height: 90px; }
   .card-value { font-size: 28px; }
   .card-label { font-size: 12px; }
   .card-unit { font-size: 14px; }
@@ -100,30 +100,67 @@ body {
   .charts-row, .energy-tdl-grid, .config-grid { grid-template-columns: 1fr; }
   .config-card-wide { grid-column: auto; }
 
-  .tab-content { padding: 12px 10px; }
+  .tab-content { padding: 10px 8px; }
 
-  .cards-grid { gap: 10px; margin-bottom: 14px; }
+  .cards-grid { gap: 8px; margin-bottom: 12px; }
 
-  .card { padding: 14px 16px; min-height: 82px; border-radius: 10px; }
-  .card-label { font-size: 11px; }
-  .card-value { font-size: 22px; flex-direction: row; gap: 4px; line-height: inherit; }
-  .card-unit { font-size: 12px; }
+  .card { padding: 12px 14px; min-height: 76px; border-radius: 8px; }
+  .card-label { font-size: 10px; }
+  .card-value { font-size: 20px; flex-direction: row; gap: 4px; line-height: inherit; }
+  .card-unit { font-size: 11px; }
 
-  .nav-brand { font-size: 14px; }
+  .nav-tab { font-size: 13px; padding: 8px 12px; }
+  .nav-brand { font-size: 13px; }
   .mqtt-indicator { display: none; }
 
-  .period-filter-btn { min-width: 80px; padding: 9px 12px; font-size: 13px; }
-  .energy-tdl-toolbar { flex-wrap: wrap; gap: 8px; }
-  .month-select { margin-left: 0; min-width: 120px; }
+  .period-filter-btn { min-width: 72px; padding: 8px 10px; font-size: 12px; }
+  .energy-tdl-toolbar { flex-wrap: wrap; gap: 6px; }
+  .month-select { margin-left: 0; min-width: 100px; }
+
+  .chart-box { min-height: 220px; padding: 14px 14px; }
+  .chart-box-filtered { min-height: 240px; }
+  .chart-title { font-size: 13px; margin-bottom: 10px; }
+
+  .section-divider { margin: 0 2px 18px; }
+  .energy-tdl-section { margin-top: 24px; }
+
+  .config-card { padding: 16px 16px; }
+  .config-card-title { font-size: 14px; margin-bottom: 12px; }
+  .config-row { gap: 10px; margin-bottom: 10px; }
+  .config-row-label { font-size: 12px; width: 60px; }
+  .mode-btn { min-width: 80px; padding: 8px 14px; font-size: 13px; }
+
+  .ir-frozen { opacity: 0.4; }
+  .capture-status { font-size: 12px; }
+  .capture-result { height: 60px; font-size: 11px; }
+  .btn-capture { padding: 6px 12px; font-size: 13px; }
+  .btn-save { padding: 7px 16px; font-size: 13px; }
+
+  .auth-modal { padding: 24px 20px; width: 300px; }
+  .auth-title { font-size: 16px; }
+  .auth-input { padding: 8px 12px; font-size: 13px; }
+  .auth-btn { padding: 8px; font-size: 13px; }
 }
 
 @media (max-width: 480px) {
-  .tab-content { padding: 10px 8px; }
-  .cards-grid { gap: 8px; }
-  .card { padding: 12px 12px; min-height: 72px; border-radius: 8px; }
-  .card-value { font-size: 18px; }
-  .card-label { font-size: 10px; }
-  .card-unit { font-size: 11px; }
-  .nav-brand { font-size: 12px; }
+  .tab-content { padding: 8px 6px; }
+  .cards-grid { gap: 6px; }
+  .card { padding: 10px 10px; min-height: 66px; border-radius: 6px; }
+  .card-value { font-size: 17px; }
+  .card-label { font-size: 9px; }
+  .card-unit { font-size: 10px; }
+  .nav-tab { font-size: 12px; padding: 6px 10px; }
+  .nav-brand { font-size: 11px; }
+
+  .chart-box { min-height: 180px; padding: 12px 10px; }
+  .chart-box-filtered { min-height: 200px; }
+  .chart-title { font-size: 12px; }
+
+  .period-filter-btn { min-width: 60px; padding: 6px 8px; font-size: 11px; }
+
+  .config-card { padding: 12px 12px; }
+  .config-card-title { font-size: 13px; }
+  .config-row-label { font-size: 11px; width: 50px; }
+  .mode-btn { min-width: 68px; padding: 6px 10px; font-size: 12px; }
 }
 
