@@ -1,4 +1,6 @@
 let pollTimer = null;
+let energyMode = "daily";
+let energyMonth = null;
 
 function init() {
   MQTTClient.connect();
@@ -21,15 +23,42 @@ function init() {
 
 async function loadInitialData() {
   try {
-    const [sensor, esp2] = await Promise.all([
+    const [sensor, esp2, energyLog] = await Promise.all([
       API.getToday(),
-      API.getTodayEnergi()
+      API.getTodayEnergi(),
+      API.getEnergyLog(),
     ]);
     Charts.loadHistorical(sensor, esp2);
-    loadEnergyTdl("daily");
-  } catch (e) {
-    // handled by API notification
-  }
+    initEnergySection(energyLog);
+  } catch (e) {}
+}
+
+function initEnergySection(rawData) {
+  Charts.initEnergyData(rawData);
+
+  const options = Helpers.extractMonthOptions(rawData);
+  const select = document.getElementById("month-select");
+  if (!select) return;
+
+  options.forEach(opt => {
+    const el = document.createElement("option");
+    el.value = opt.key;
+    el.textContent = opt.label;
+    select.appendChild(el);
+  });
+
+  const now = new Date();
+  const currentKey = Helpers.getMonthKey(now);
+  const exists = options.some(o => o.key === currentKey);
+  energyMonth = exists ? currentKey : (options[0]?.key || currentKey);
+  select.value = energyMonth;
+
+  select.addEventListener("change", () => {
+    energyMonth = select.value;
+    Charts.renderEnergyView(energyMonth, energyMode);
+  });
+
+  Charts.renderEnergyView(energyMonth, energyMode);
 }
 
 function bindEvents() {
@@ -71,18 +100,16 @@ function switchTab(name) {
   if (btn) btn.classList.add("active");
 }
 
-async function loadEnergyTdl(range, button) {
+function loadEnergyTdl(range, button) {
   if (button) {
     document.querySelectorAll("[data-filter-energy]").forEach(b => b.classList.remove("active"));
     button.classList.add("active");
   }
   const title = document.getElementById("title-energi-filtered");
   if (title) title.textContent = `Konsumsi Energi (${range === "daily" ? "Harian" : "Mingguan"})`;
-  try {
-    const rows = await API.getTDL(range);
-    Charts.loadEnergyTdl(rows, range);
-  } catch (e) {
-    // handled by API notification
+  energyMode = range;
+  if (energyMonth) {
+    Charts.renderEnergyView(energyMonth, energyMode);
   }
 }
 
@@ -94,9 +121,7 @@ function startPolling() {
         API.getTodayEnergi()
       ]);
       Charts.loadHistorical(sensor, esp2);
-    } catch (e) {
-      // handled by API notification
-    }
+    } catch (e) {}
   }
   pollTimer = setInterval(poll, 60000);
 

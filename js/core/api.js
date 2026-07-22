@@ -38,7 +38,11 @@ const API = (() => {
     return get({ action: "getData", sheet: "ESP2_SensorLog", range });
   }
 
-  return { getToday, getTodayEnergi, getHistorical, getEnergyHistory, getTDL };
+  function getEnergyLog() {
+    return get({ action: "getData", sheet: "ESP2_EnergyLog" });
+  }
+
+  return { getToday, getTodayEnergi, getHistorical, getEnergyHistory, getTDL, getEnergyLog };
 })();
 window.Dashboard = window.Dashboard || {};
 window.Dashboard.API = API;

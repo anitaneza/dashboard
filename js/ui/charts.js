@@ -147,16 +147,82 @@ const Charts = (() => {
     ]);
   }
 
-  function renderEnergiFiltered(rows, range) {
-    const chart = getEnergiFilteredChart();
-    const labels = rows.map(row => range === "weekly" ? formatDay(row.Timestamp) : formatTime(row.Timestamp));
-    updateChart(chart, labels, [values(rows, ["Energi", "Energi_Avg", "total_energi"])]);
+  let energyLogData = null;
+
+  function initEnergyData(rawRows) {
+    energyLogData = rawRows;
   }
 
-  function renderTdl(rows, range) {
-    const chart = getTDLChart();
-    const labels = rows.map(row => range === "weekly" ? formatDay(row.Timestamp) : formatTime(row.Timestamp));
-    updateChart(chart, labels, [values(rows, ["TDL", "Tegangan", "Voltage", "Tegangan_Avg", "Voltage_Avg"])]);
+  function getMonthRows(monthKey) {
+    if (!energyLogData) return [];
+    return energyLogData.filter(row => {
+      const d = new Date(row.Timestamp);
+      return !isNaN(d.getTime()) && Helpers.getMonthKey(d) === monthKey;
+    });
+  }
+
+  function aggregateWeeks(monthRows, monthKey) {
+    const [year, month] = monthKey.split("-").map(Number);
+    const startOfMonth = new Date(year, month - 1, 1);
+    const endOfMonth = new Date(year, month, 0);
+    const weeks = [];
+    let weekStart = new Date(startOfMonth);
+
+    while (weekStart <= endOfMonth) {
+      const weekEnd = new Date(weekStart);
+      weekEnd.setDate(weekEnd.getDate() + 6);
+      const chunkEnd = weekEnd > endOfMonth ? new Date(endOfMonth) : weekEnd;
+
+      let sumEnergi = 0, sumTarif = 0;
+      monthRows.forEach(row => {
+        const d = new Date(row.Timestamp);
+        if (d >= weekStart && d <= chunkEnd) {
+          sumEnergi += Number(row.Energi_kWh) || 0;
+          sumTarif += Number(row.Tarif_Listrik) || 0;
+        }
+      });
+
+      weeks.push({
+        label: `${weekStart.getDate()} ${Helpers.MONTHS_SHORT[weekStart.getMonth()]} - ${chunkEnd.getDate()} ${Helpers.MONTHS_SHORT[chunkEnd.getMonth()]}`,
+        energi: sumEnergi,
+        tarif: sumTarif,
+      });
+
+      weekStart = new Date(chunkEnd);
+      weekStart.setDate(weekStart.getDate() + 1);
+    }
+    return weeks;
+  }
+
+  function renderEnergyView(monthKey, mode) {
+    const monthRows = getMonthRows(monthKey);
+    let labels, energiData, tarifData;
+
+    if (mode === "weekly") {
+      const weeks = aggregateWeeks(monthRows, monthKey);
+      labels = weeks.map(w => w.label);
+      energiData = weeks.map(w => w.energi);
+      tarifData = weeks.map(w => w.tarif);
+    } else {
+      monthRows.sort((a, b) => new Date(a.Timestamp) - new Date(b.Timestamp));
+      labels = monthRows.map(r => Helpers.formatShortDate(r.Timestamp));
+      energiData = monthRows.map(r => Number(r.Energi_kWh) || 0);
+      tarifData = monthRows.map(r => Number(r.Tarif_Listrik) || 0);
+    }
+
+    const energiChart = getEnergiFilteredChart();
+    if (energiChart) {
+      energiChart.data.labels = labels;
+      energiChart.data.datasets[0].data = energiData;
+      energiChart.update();
+    }
+
+    const tdlChart = getTDLChart();
+    if (tdlChart) {
+      tdlChart.data.labels = labels;
+      tdlChart.data.datasets[0].data = tarifData;
+      tdlChart.update();
+    }
   }
 
   function renderTHI(rows) {
@@ -186,8 +252,6 @@ const Charts = (() => {
   function initMonitoring() {
     getSuhuKelembabanChart();
     getDayaChart();
-    getEnergiFilteredChart();
-    getTDLChart();
   }
 
   function loadHistorical(rowsSensor, rowsESP2) {
@@ -195,13 +259,7 @@ const Charts = (() => {
     if (rowsESP2 && rowsESP2.length) renderDaya(rowsESP2);
   }
 
-  function loadEnergyTdl(rows, range) {
-    if (!rows || !rows.length) return;
-    renderEnergiFiltered(rows, range);
-    renderTdl(rows, range);
-  }
-
-  return { initMonitoring, loadHistorical, loadEnergyTdl };
+  return { initMonitoring, loadHistorical, initEnergyData, renderEnergyView };
 })();
 window.Dashboard = window.Dashboard || {};
 window.Dashboard.Charts = Charts;

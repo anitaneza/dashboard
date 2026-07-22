@@ -331,6 +331,13 @@ input:checked + .slider::before {
   margin-top: 8px;
 }
 
+/* MONTH SELECT */
+.month-select {
+  width: auto;
+  min-width: 140px;
+  margin-left: auto;
+}
+
 /* SECTION TITLE */
 .section-title {
   font-family: var(--font-display);
