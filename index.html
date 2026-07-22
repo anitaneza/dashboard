@@ -158,6 +158,20 @@
     </div>
   </div>
 
+  <!-- AUTH MODAL -->
+  <div class="auth-overlay hidden" id="auth-overlay">
+    <div class="auth-modal">
+      <button class="auth-close" id="auth-close">&times;</button>
+      <div class="auth-title">Masukkan Password Admin</div>
+      <input type="text" class="auth-input" id="auth-username" placeholder="Username" autocomplete="off">
+      <input type="password" class="auth-input" id="auth-password" placeholder="Password">
+      <div class="auth-error hidden" id="auth-error">Username atau password salah</div>
+      <div class="auth-actions">
+        <button class="auth-btn auth-btn-submit" id="auth-submit">Masuk</button>
+      </div>
+    </div>
+  </div>
+
   <script src="js/core/config.js"></script>
   <script src="js/core/helpers.js"></script>
   <script src="js/core/mqtt.js"></script>

@@ -61,10 +61,40 @@ function initEnergySection(rawData) {
   Charts.renderEnergyView(energyMonth, energyMode);
 }
 
+function closeAuth() {
+  document.getElementById("auth-overlay").classList.add("hidden");
+  document.getElementById("auth-username").value = "";
+  document.getElementById("auth-password").value = "";
+  document.getElementById("auth-error").classList.add("hidden");
+}
+
+function doLogin() {
+  const user = document.getElementById("auth-username").value.trim();
+  const pass = document.getElementById("auth-password").value;
+  if (user === "adminAC" && pass === "AC1234") {
+    closeAuth();
+    switchTab("config");
+  } else {
+    document.getElementById("auth-error").classList.remove("hidden");
+  }
+}
+
 function bindEvents() {
   document.querySelector(".navbar")?.addEventListener("click", (e) => {
     const btn = e.target.closest("[data-tab]");
-    if (btn) switchTab(btn.dataset.tab);
+    if (!btn) return;
+    if (btn.dataset.tab === "config") {
+      document.getElementById("auth-overlay").classList.remove("hidden");
+      document.getElementById("auth-username").focus();
+      return;
+    }
+    switchTab(btn.dataset.tab);
+  });
+
+  document.getElementById("auth-submit")?.addEventListener("click", doLogin);
+  document.getElementById("auth-close")?.addEventListener("click", closeAuth);
+  document.getElementById("auth-password")?.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") doLogin();
   });
 
   document.querySelector("[data-filter-energy]")?.closest(".energy-tdl-toolbar")?.addEventListener("click", (e) => {
