@@ -53,7 +53,7 @@ const Monitoring = (() => {
     });
 
     MQTTClient.on("SETPOINT", v => {
-      if (els["val-setpoint"]) els["val-setpoint"].textContent = v;
+      if (els["val-setpoint"]) els["val-setpoint"].textContent = parseFloat(v).toFixed(0);
     });
 
     MQTTClient.on("DAYA", v => {

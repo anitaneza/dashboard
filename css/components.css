@@ -36,12 +36,12 @@
 
 .nav-brand {
   font-family: var(--font-display);
-  font-size: 16px;
+  font-size: 0;
   font-weight: 700;
   letter-spacing: 1px;
 }
 
-.dot { color: var(--accent); }
+.dot { display: none; color: var(--accent); }
 
 .mqtt-indicator {
   font-family: var(--font-body);
@@ -386,6 +386,7 @@
   .nav-tab { font-size: 15px; padding: 6px 18px; min-height: auto; }
 
   .nav-brand { font-size: 20px; }
+  .dot { display: inline; color: var(--accent); }
 
   .chart-box { border-radius: 14px; padding: 18px 20px; min-height: 300px; }
   .chart-title { font-size: 15px; margin-bottom: 14px; }
