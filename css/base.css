@@ -36,7 +36,7 @@ body {
 /* GRID LAYOUTS */
 .cards-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 14px;
   margin-bottom: 20px;
 }
@@ -90,22 +90,24 @@ body {
 
   .tab-content { padding: 12px 10px; }
 
-  .cards-grid { gap: 6px; }
+  .cards-grid { gap: 5px; }
 
   .card {
-    padding: 10px 8px;
-    min-height: 72px;
-    border-radius: 8px;
+    padding: 8px 5px;
+    min-height: 62px;
+    border-radius: 6px;
   }
 
-  .card-label { font-size: 10px; }
+  .card-label { font-size: 9px; }
 
   .card-value {
-    font-size: 20px;
-    gap: 3px;
+    font-size: 16px;
+    flex-direction: column;
+    gap: 0;
+    line-height: 1.1;
   }
 
-  .card-unit { font-size: 10px; }
+  .card-unit { font-size: 9px; }
 
   .nav-brand { font-size: 14px; }
 
@@ -115,10 +117,11 @@ body {
 }
 
 @media (max-width: 480px) {
-  .card-value { font-size: 16px; }
-  .card { padding: 8px 6px; min-height: 64px; }
-  .card-label { font-size: 9px; }
-  .card-unit { font-size: 9px; }
+  .card-value { font-size: 13px; }
+  .card { padding: 6px 3px; min-height: 54px; border-radius: 4px; }
+  .card-label { font-size: 8px; }
+  .card-unit { font-size: 8px; }
+  .cards-grid { gap: 4px; }
   .nav-brand { font-size: 12px; }
 }
 
